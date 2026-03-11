@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: buyzone-monitor
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: WHATSAPP_PHONE
+        sync: false
+      - key: WHATSAPP_APIKEY
+        sync: false
+      - key: CRON_SCHEDULE
+        value: "45 15 * * 1-5"
