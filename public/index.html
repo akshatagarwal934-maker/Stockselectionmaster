@@ -91,7 +91,7 @@ async function load(){
 async function doRefresh(){
   document.getElementById("ref-btn").textContent="⟳ Refreshing...";
   try{
-    await fetch("https://stockselectionmaster-1.onrender.com/api/refresh"),{method:"POST"});
+    await fetch("https://stockselectionmaster-1.onrender.com/api/refresh",{method:"POST"});
     await load();
   }catch(e){}
   document.getElementById("ref-btn").textContent="🔄 Refresh Prices";
@@ -105,7 +105,7 @@ async function doSend(){
     await fetch("/api/config",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({phone:waPhone,apiKey:waKey})});
     logs.push({t:"ok",m:"Config saved ✓"});render();
     logs.push({t:"in",m:"Sending WhatsApp alert..."});render();
-    const r=await fetch("https://stockselectionmaster-1.onrender.com/api/test-alert"),{method:"POST"});
+    const r=await fetch("https://stockselectionmaster-1.onrender.com/api/test-alert",{method:"POST"});
     const d=await r.json();
     if(d.ok){logs.push({t:"dn",m:"✓ Alert sent! Check your WhatsApp 📱"});}
     else{logs.push({t:"er",m:"Send failed: "+(d.error||"unknown")});}
