@@ -1,1 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#060A10">
+<title>Buy Zone Monitor</title>
+<style>
+:root{--bg:#060A10;--p:#0C1218;--c:#121A24;--b:#1C2838;--bl:#2A3B50;
+--g:#00E6A0;--gd:#00E6A015;--am:#FFB020;--amd:#FFB02015;
+--r:#FF4060;--rd:#FF406015;--bl2:#3890FF;--cy:#00CCEE;
+--t:#D0D8E4;--d:#6B7A8D;--m:#3D4D5E;--w:#F0F4F8}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t);min-height:100dvh;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;border:none;outline:none}
+input{font-family:inherit;outline:none}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--b);border-radius:2px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.fade{animation:fadeUp .25s ease}
+.hdr{background:linear-gradient(180deg,var(--p),var(--bg));border-bottom:1px solid var(--b);padding:env(safe-area-inset-top,0) 16px 14px;padding-top:max(16px,env(safe-area-inset-top))}
+.hdr h1{font-size:20px;font-weight:800;letter-spacing:-.4px}.hdr h1 em{color:var(--g);font-style:normal}
+.hdr .sub{font-size:11px;color:var(--d);margin-top:2px}
+.tabs{display:flex;border-bottom:1px solid var(--b);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tabs button{background:none;color:var(--d);padding:10px 16px;font-size:12px;font-weight:600;white-space:nowrap;border-bottom:2px solid transparent;transition:.15s}
+.tabs button.on{color:var(--g);border-bottom-color:var(--g)}
+.banner{margin:12px 16px;background:linear-gradient(90deg,var(--gd),transparent);border:1px solid #00E6A025;border-radius:10px;padding:12px}
+.banner h3{font-size:11px;color:var(--g);font-weight:700;margin-bottom:6px}
+.chips{display:flex;flex-wrap:wrap;gap:4px}
+.chip{background:var(--c);border-radius:5px;padding:3px 7px;border:1px solid #00E6A020;font-size:10px}
+.chip b{color:var(--w)}.chip .s{color:var(--g);margin-left:4px}.chip .u{color:var(--cy);margin-left:4px}
+.main{padding:0 16px 100px}
+.card{background:var(--p);border-radius:10px;border:1px solid var(--b);margin-bottom:12px;overflow:hidden}
+.card h3{padding:12px 14px 0;font-size:13px;font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:11px}
+thead{position:sticky;top:0;background:var(--p);z-index:1}
+th{text-align:left;padding:8px 6px;color:var(--m);font-size:8px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;border-bottom:1px solid var(--b)}
+td{padding:7px 6px;border-bottom:1px solid #1C283808}
+.z{padding:2px 6px;border-radius:3px;font-size:8px;font-weight:700;display:inline-block}
+.zB{background:var(--gd);color:var(--g)}.zH{background:var(--amd);color:var(--am)}.zA{background:var(--rd);color:var(--r)}
+.wa-card{background:var(--p);border-radius:10px;border:1px solid var(--b);padding:16px;margin-bottom:12px}
+.wa-card h3{font-size:14px;margin-bottom:4px}.wa-card .sub{font-size:10px;color:var(--d);margin-bottom:12px}
+.inp{width:100%;background:var(--bg);border:1px solid var(--b);border-radius:6px;padding:10px 12px;color:var(--w);font-size:13px;margin-bottom:8px}
+.inp::placeholder{color:var(--m)}
+.btn{width:100%;padding:12px;border-radius:8px;font-size:13px;font-weight:700;color:var(--bg);transition:.2s}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-go{background:linear-gradient(135deg,var(--g),#00CC80)}
+.btn-off{background:var(--b);color:var(--m)}
+.btn-ref{background:var(--c);color:var(--d);border:1px solid var(--b);margin-top:8px}
+.log{margin-top:10px;background:var(--bg);border-radius:6px;padding:8px;max-height:120px;overflow:auto;font-size:10px}
+.log .ok{color:var(--g)}.log .er{color:var(--r)}.log .in{color:var(--d)}.log .dn{color:var(--cy);font-weight:700}
+.setup{background:var(--c);border-radius:8px;padding:12px;margin-top:10px;border:1px solid var(--bl);font-size:11px;color:var(--d);line-height:1.8}
+.setup b{color:var(--w)}.setup code{color:var(--g);font-family:monospace;background:var(--bg);padding:1px 4px;border-radius:3px}
+.dot{width:6px;height:6px;border-radius:3px;display:inline-block;margin-right:4px}
+.dot-live{background:var(--g);animation:pulse 1.5s infinite}
+.dot-stale{background:var(--am)}
+.share a{display:flex;align-items:center;gap:8px;padding:7px 0;text-decoration:none;border-bottom:1px solid #1C283812}
+.share a:active{opacity:.7}
+.bar{position:fixed;bottom:0;left:0;right:0;background:var(--p);border-top:1px solid var(--b);padding:10px 16px;display:flex;gap:8px;z-index:10;padding-bottom:max(10px,env(safe-area-inset-bottom))}
+.bar button{flex:1;padding:10px;border-radius:7px;font-size:11px;font-weight:600}
+.bar .bref{background:var(--c);color:var(--d);border:1px solid var(--b)}
+.bar .bwa{background:#25D36618;color:#25D366;border:1px solid #25D36630}
+@media(min-width:700px){.main{display:grid;grid-template-columns:1fr 350px;gap:14px;align-items:start}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div style="display:flex;align-items:center;justify-content:center;height:100dvh;color:var(--d)">
+    <div style="text-align:center"><div style="font-size:24px;animation:spin 1s linear infinite;display:inline-block;margin-bottom:8px">⟳</div><br>Loading portfolio data...</div>
+  </div>
+</div>
 
+<script>
+let tab="buy",scored=[],buyStocks=[],lastUp=null,logs=[],sending=false,waPhone="",waKey="",alerts=[];
+
+async function load(){
+  try{
+    const r=await fetch("/api/scores");
+    const d=await r.json();
+    scored=d.scores||[];
+    lastUp=d.lastUpdate;
+    alerts=d.alertHistory||[];
+    buyStocks=scored.filter(s=>s.sc&&s.sc.zone==="BUY");
+    render();
+  }catch(e){render();}
+}
+
+async function doRefresh(){
+  document.getElementById("ref-btn").textContent="⟳ Refreshing...";
+  try{
+    await fetch("/api/refresh",{method:"POST"});
+    await load();
+  }catch(e){}
+  document.getElementById("ref-btn").textContent="🔄 Refresh Prices";
+}
+
+async function doSend(){
+  if(sending||!waPhone||!waKey)return;
+  sending=true;logs=[];render();
+  try{
+    logs.push({t:"in",m:"Saving config..."});render();
+    await fetch("/api/config",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({phone:waPhone,apiKey:waKey})});
+    logs.push({t:"ok",m:"Config saved ✓"});render();
+    logs.push({t:"in",m:"Sending WhatsApp alert..."});render();
+    const r=await fetch("/api/test-alert",{method:"POST"});
+    const d=await r.json();
+    if(d.ok){logs.push({t:"dn",m:"✓ Alert sent! Check your WhatsApp 📱"});}
+    else{logs.push({t:"er",m:"Send failed: "+(d.error||"unknown")});}
+  }catch(e){logs.push({t:"er",m:"Error: "+e.message});}
+  sending=false;render();
+}
+
+function quickWA(){
+  const m="🚨 BUY ZONE "+new Date().toLocaleDateString("en-IN")+"\n\n"+
+    buyStocks.slice(0,8).map(s=>"✅ "+s.s+": "+s.sc.tot+"/100 | ₹"+s.l.toFixed(0)+"→₹"+s.sc.dcf+" (+"+s.sc.up+"%)").join("\n")+
+    "\n\n"+buyStocks.length+" stocks in buy zone";
+  window.open("https://wa.me/?text="+encodeURIComponent(m),"_blank");
+}
+
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function zc(z){return z==="BUY"?"zB":z==="HOLD"?"zH":"zA"}
+function pc(v){return v>=0?"color:var(--g)":"color:var(--r)"}
+
+function render(){
+  const list=tab==="buy"?buyStocks:scored;
+  const totalInv=scored.reduce((s,h)=>s+h.q*h.a,0);
+  const totalCur=scored.reduce((s,h)=>s+h.q*h.l,0);
+  const pnl=totalCur-totalInv;
+  const pnlP=totalInv?((pnl/totalInv)*100).toFixed(1):0;
+  const upd=lastUp?new Date(lastUp).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",day:"2-digit",month:"short"}):"loading...";
+  const isLive=lastUp&&(Date.now()-new Date(lastUp).getTime()<3600000);
+
+  const rows=list.map(h=>{
+    if(!h.sc)return"";
+    const pnl1=h.q*(h.l-h.a);
+    return`<tr>
+      <td style="font-weight:700;color:var(--w)">${esc(h.s)}<br><span style="font-weight:400;font-size:9px;color:var(--m)">${esc(h.sc.sec)}</span></td>
+      <td>₹${h.l.toFixed(0)}</td>
+      <td style="color:var(--bl2)">₹${h.sc.dcf}</td>
+      <td style="${pc(h.sc.up)};font-weight:600">${h.sc.up>0?"+":""}${h.sc.up}%</td>
+      <td style="font-weight:700;${h.sc.zone==="BUY"?"color:var(--g)":h.sc.zone==="HOLD"?"color:var(--am)":"color:var(--r)"}">${h.sc.tot}</td>
+      <td><span class="z ${zc(h.sc.zone)}">${h.sc.zone}</span></td>
+    </tr>`;
+  }).join("");
+
+  const chips=buyStocks.map(s=>`<span class="chip"><b>${esc(s.s)}</b><span class="s">${s.sc.tot}</span><span class="u">+${s.sc.up}%</span></span>`).join("");
+  const logH=logs.map(l=>`<div class="${l.t}">${esc(l.m)}</div>`).join("");
+  const shareH=buyStocks.slice(0,5).map(s=>{
+    const m=`📊 BUY: ${s.s}\nScore: ${s.sc.tot}/100\nLTP ₹${s.l.toFixed(0)} → ₹${s.sc.dcf} (+${s.sc.up}%)\n${s.sc.nw}`;
+    return`<a href="https://wa.me/?text=${encodeURIComponent(m)}" target="_blank"><span style="font-size:14px">📲</span><span style="color:var(--w);font-size:12px;font-weight:600;flex:1">${esc(s.s)}</span><span style="color:var(--g);font-size:10px">${s.sc.tot}/100</span><span style="color:var(--bl2);font-size:10px">Share</span></a>`;
+  }).join("");
+
+  const alertsH=alerts.length?`<div style="margin-top:10px;font-size:10px;color:var(--d)"><b>Recent alerts:</b>`+alerts.slice(-3).map(a=>`<div style="margin-top:3px">${new Date(a.time).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",day:"2-digit",month:"short"})} — ${a.stocks} stocks — <span style="color:${a.status==="sent"?"var(--g)":"var(--r)"}">${a.status}</span></div>`).join("")+`</div>`:"";
+
+  const canSend=waPhone&&waKey&&!sending;
+
+  document.getElementById("app").innerHTML=`
+    <div class="hdr">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+        <span class="dot ${isLive?"dot-live":"dot-stale"}"></span>
+        <span style="font-size:10px;color:var(--d);letter-spacing:1px">UPDATED ${upd}</span>
+      </div>
+      <h1>Portfolio <em>Buy Zone</em></h1>
+      <div class="sub">${scored.length} stocks • <span style="color:var(--g);font-weight:700">${buyStocks.length} BUY</span> • P&L: <span style="${pc(pnl)}">${pnl>=0?"+":""}₹${(pnl/1000).toFixed(0)}K (${pnlP}%)</span> • Auto-alerts at 3:45 PM</div>
+    </div>
+
+    <div class="tabs">
+      <button class="${tab==="buy"?"on":""}" onclick="tab='buy';render()">🟢 Buy (${buyStocks.length})</button>
+      <button class="${tab==="all"?"on":""}" onclick="tab='all';render()">All Stocks</button>
+      <button class="${tab==="setup"?"on":""}" onclick="tab='setup';render()">⚙ Setup</button>
+    </div>
+
+    ${tab!=="setup"?`<div class="banner"><h3>🟢 BUY ZONE — ${buyStocks.length} stocks scoring ≥60</h3><div class="chips">${chips}</div></div>`:""}
+
+    <div class="main">
+      ${tab==="setup"?`
+        <div class="fade">
+          <div class="wa-card">
+            <h3>⚙ How It Works</h3>
+            <div class="sub">Fully automated — runs every weekday at market close</div>
+            <div style="font-size:12px;line-height:1.9;color:var(--d)">
+              <p style="margin-bottom:10px"><b style="color:var(--g)">Agent 1 — Price Fetcher</b><br>Fetches live stock prices automatically every weekday at 3:45 PM IST.</p>
+              <p style="margin-bottom:10px"><b style="color:var(--am)">Agent 2 — Scoring Engine</b><br>7-pillar 100-point model: DCF (20), Valuation (15), Growth (15), Quality (15), Technical (15), Safety (10), Governance (10). Score ≥60 = BUY.</p>
+              <p><b style="color:var(--bl2)">Agent 3 — WhatsApp Alerts</b><br>Automatically sends buy-zone alerts to your WhatsApp via CallMeBot. Zero manual work after setup.</p>
+            </div>
+          </div>
+          <div class="wa-card">
+            <h3>📱 Install as Phone App</h3>
+            <div style="font-size:12px;color:var(--d);line-height:1.8">
+              <b style="color:var(--w)">Android:</b> Chrome → ⋮ menu → "Add to Home Screen"<br>
+              <b style="color:var(--w)">iPhone:</b> Safari → Share → "Add to Home Screen"<br>
+              Opens like a native app. Works offline.
+            </div>
+          </div>
+        </div>
+      `:`
+        <div class="card fade" style="overflow:auto;max-height:65vh">
+          <table><thead><tr>
+            <th>Stock</th><th>LTP</th><th>DCF</th><th>Upside</th><th>Score</th><th>Zone</th>
+          </tr></thead><tbody>${rows}</tbody></table>
+        </div>
+      `}
+
+      <div>
+        <div class="wa-card fade">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+            <span style="font-size:22px">📲</span>
+            <div><h3>WhatsApp Alerts</h3><div class="sub">Auto-sends at 3:45 PM daily</div></div>
+          </div>
+          <input class="inp" id="wa-phone" value="${esc(waPhone)}" placeholder="Phone: 919876543210" oninput="waPhone=this.value">
+          <input class="inp" id="wa-key" value="${esc(waKey)}" placeholder="CallMeBot API Key" oninput="waKey=this.value">
+          <button class="btn ${canSend?"btn-go":"btn-off"}" ${canSend?"":"disabled"} onclick="doSend()">
+            ${sending?"⏳ Sending...":"📩 Save & Send Test Alert"}
+          </button>
+          ${!waPhone&&!waKey?`<div class="setup"><b>One-time setup (2 min):</b><br>1. Save <code>+34 644 51 84 61</code> in contacts<br>2. WhatsApp them: <code>I allow callmebot to send me messages</code><br>3. Get API key → enter above<br><br>After setup, alerts are <b style="color:var(--g)">fully automatic</b> — runs daily at market close.</div>`:""}
+          ${logH?`<div class="log">${logH}</div>`:""}
+          ${alertsH}
+        </div>
+        <div class="wa-card">
+          <div style="font-size:11px;font-weight:700;color:var(--d);margin-bottom:6px">Quick Share</div>
+          <div class="share">${shareH}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bar">
+      <button class="bref" id="ref-btn" onclick="doRefresh()">🔄 Refresh Prices</button>
+      <button class="bwa" onclick="quickWA()">📲 WhatsApp All</button>
+    </div>
+
+    <div style="padding:16px 16px 80px;font-size:8px;color:var(--m)">Not financial advice. Consult SEBI-registered advisor.</div>
+  `;
+}
+
+// Auto-refresh every 5 minutes
+load();
+setInterval(load, 300000);
+</script>
+</body>
+</html>
