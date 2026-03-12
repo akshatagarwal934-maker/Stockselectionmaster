@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#060A10">
+<title>Buy Zone Monitor</title>
+<style>
+:root{--bg:#060A10;--p:#0C1218;--c:#131B25;--b:#1E2A3A;--bl:#2C3E54;--g:#00E6A0;--gd:#00E6A012;--am:#FFB020;--amd:#FFB02012;--r:#FF4060;--rd:#FF406012;--b2:#3890FF;--cy:#00CCEE;--t:#CDD5E0;--d:#6B7A8D;--m:#3D4D5E;--w:#EEF2F7}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--t);min-height:100dvh;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer;border:none;outline:none}input{font-family:inherit;outline:none}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--b);border-radius:2px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.f{animation:fadeUp .25s ease}
+
+.hd{background:linear-gradient(180deg,var(--p),var(--bg));border-bottom:1px solid var(--b);padding:16px;position:sticky;top:0;z-index:10}
+.hd h1{font-size:19px;font-weight:800;letter-spacing:-.3px}.hd em{color:var(--g);font-style:normal}
+.hd .s{font-size:11px;color:var(--d);margin-top:2px}
+
+.tb{display:flex;border-bottom:1px solid var(--b);overflow-x:auto}
+.tb button{background:none;color:var(--d);padding:10px 14px;font-size:12px;font-weight:600;white-space:nowrap;border-bottom:2px solid transparent;transition:.15s}
+.tb .on{color:var(--g);border-bottom-color:var(--g)}
+
+.bn{margin:10px 14px;background:var(--gd);border:1px solid #00E6A020;border-radius:10px;padding:10px 12px}
+.bn h3{font-size:11px;color:var(--g);font-weight:700;margin-bottom:6px}
+.ch{display:flex;flex-wrap:wrap;gap:4px}
+.cp{background:var(--c);border-radius:5px;padding:3px 7px;border:1px solid #00E6A018;font-size:10px}
+.cp b{color:var(--w)}.cp .sc{color:var(--g);margin-left:4px}.cp .up{color:var(--cy);margin-left:4px}
+
+.mn{padding:0 14px 90px}
+.cd{background:var(--p);border-radius:10px;border:1px solid var(--b);margin-bottom:10px;overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:11px}
+thead{position:sticky;top:0;background:var(--p);z-index:1}
+th{text-align:left;padding:8px 5px;color:var(--m);font-size:8px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;border-bottom:1px solid var(--b)}
+td{padding:6px 5px;border-bottom:1px solid #1E2A3A08}
+.z{padding:2px 6px;border-radius:3px;font-size:8px;font-weight:700}.zB{background:var(--gd);color:var(--g)}.zH{background:var(--amd);color:var(--am)}.zA{background:var(--rd);color:var(--r)}
+
+.pc{background:var(--p);border-radius:10px;border:1px solid var(--b);padding:14px;margin-bottom:10px}
+.pc h3{font-size:14px;margin-bottom:4px}.pc .sub{font-size:10px;color:var(--d);margin-bottom:12px}
+.inp{width:100%;background:var(--bg);border:1px solid var(--b);border-radius:6px;padding:10px 12px;color:var(--w);font-size:13px;margin-bottom:8px}
+.inp::placeholder{color:var(--m)}
+.bt{width:100%;padding:12px;border-radius:8px;font-size:13px;font-weight:700;color:#060A10;transition:.2s}
+.bt:disabled{opacity:.5;cursor:not-allowed}
+.bt-go{background:linear-gradient(135deg,var(--g),#00CC80)}
+.bt-off{background:var(--b);color:var(--m)}
+.lg{margin-top:10px;background:var(--bg);border-radius:6px;padding:8px;font-size:10px;max-height:120px;overflow:auto}
+.lg .ok{color:var(--g)}.lg .er{color:var(--r)}.lg .in{color:var(--d)}
+
+.st{background:var(--c);border-radius:8px;padding:12px;margin-top:10px;border:1px solid var(--bl);font-size:11px;color:var(--d);line-height:1.9}
+.st b{color:var(--w)}.st code{color:var(--g);font-family:monospace;background:var(--bg);padding:1px 5px;border-radius:3px;font-size:11px}
+
+.bar{position:fixed;bottom:0;left:0;right:0;background:var(--p);border-top:1px solid var(--b);padding:10px 14px;display:flex;gap:8px;z-index:10;padding-bottom:max(10px,env(safe-area-inset-bottom))}
+.bar button{flex:1;padding:10px;border-radius:7px;font-size:11px;font-weight:600}
+.bar .r{background:var(--c);color:var(--d);border:1px solid var(--b)}
+.bar .t{background:#229ED918;color:#229ED9;border:1px solid #229ED930}
+
+.dot{width:6px;height:6px;border-radius:3px;display:inline-block;margin-right:4px}
+.dot-l{background:var(--g);animation:pulse 1.5s infinite}.dot-s{background:var(--am)}
+@media(min-width:700px){.mn{display:grid;grid-template-columns:1fr 360px;gap:12px;align-items:start}}
+</style>
+</head>
+<body>
+<div id="app"><div style="display:flex;align-items:center;justify-content:center;height:100dvh;color:var(--d)"><div style="text-align:center;font-size:13px">Loading portfolio...</div></div></div>
+<script>
+let tab="buy",data=[],buy=[],upd=null,logs=[],tgToken="",tgChat="",sending=false;
+
+async function load(){
+  try{
+    const r=await fetch("/api/scores");
+    const d=await r.json();
+    data=d.scores||[];buy=data.filter(s=>s.sc&&s.sc.zone==="BUY");upd=d.lastUpdate;
+  }catch(e){console.error(e)}
+  render();
+}
+
+async function sendAlert(){
+  if(sending||!tgToken||!tgChat)return;
+  sending=true;logs=[{t:"in",m:"Connecting to Telegram..."}];render();
+  try{
+    const r=await fetch("/api/send-alert",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({token:tgToken,chatId:tgChat})});
+    const d=await r.json();
+    if(d.ok){logs.push({t:"ok",m:`✅ Alert sent! ${d.buyZone} buy-zone stocks. Check Telegram.`});}
+    else{logs.push({t:"er",m:"Failed: "+(d.error||"unknown")});}
+  }catch(e){logs.push({t:"er",m:"Error: "+e.message});}
+  sending=false;render();
+}
+
+async function refresh(){
+  document.getElementById("rb").textContent="Refreshing...";
+  await load();
+  document.getElementById("rb").textContent="🔄 Refresh";
+}
+
+function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+function render(){
+  const list=tab==="buy"?buy:data;
+  const inv=data.reduce((s,h)=>s+h.q*h.a,0);
+  const cur=data.reduce((s,h)=>s+h.q*h.l,0);
+  const pnl=cur-inv;const pp=inv?((pnl/inv)*100).toFixed(1):0;
+  const ut=upd?new Date(upd).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",day:"2-digit",month:"short"}):"—";
+  const live=upd&&(Date.now()-new Date(upd)<3600000);
+
+  const rows=list.map(h=>{if(!h.sc)return"";return`<tr>
+    <td style="font-weight:700;color:var(--w)">${esc(h.s)}<br><span style="font-weight:400;font-size:9px;color:var(--m)">${esc(h.sc.sec)}</span></td>
+    <td>₹${h.l.toFixed(0)}</td><td style="color:var(--b2)">₹${h.sc.dcf}</td>
+    <td style="color:${h.sc.up>0?"var(--g)":"var(--r)"};font-weight:600">${h.sc.up>0?"+":""}${h.sc.up}%</td>
+    <td style="font-weight:700;color:${h.sc.zone==="BUY"?"var(--g)":h.sc.zone==="HOLD"?"var(--am)":"var(--r)"}">${h.sc.tot}</td>
+    <td><span class="z z${h.sc.zone[0]}">${h.sc.zone}</span></td></tr>`;}).join("");
+
+  const chips=buy.map(s=>`<span class="cp"><b>${esc(s.s)}</b><span class="sc">${s.sc.tot}</span><span class="up">+${s.sc.up}%</span></span>`).join("");
+  const logH=logs.map(l=>`<div class="${l.t}">${esc(l.m)}</div>`).join("");
+  const canSend=tgToken&&tgChat&&!sending;
+
+  document.getElementById("app").innerHTML=`
+  <div class="hd">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+      <span class="dot ${live?"dot-l":"dot-s"}"></span>
+      <span style="font-size:10px;color:var(--d)">${ut}</span>
+    </div>
+    <h1>Portfolio <em>Buy Zone</em></h1>
+    <div class="s">${data.length} stocks • <span style="color:var(--g);font-weight:700">${buy.length} BUY</span> • P&L: <span style="color:${pnl>=0?"var(--g)":"var(--r)"}">${pnl>=0?"+":""}₹${(pnl/1000).toFixed(0)}K (${pp}%)</span> • Cron: 3:45 PM daily</div>
+  </div>
+  <div class="tb">
+    <button class="${tab==="buy"?"on":""}" onclick="tab='buy';render()">🟢 Buy (${buy.length})</button>
+    <button class="${tab==="all"?"on":""}" onclick="tab='all';render()">All Stocks</button>
+    <button class="${tab==="setup"?"on":""}" onclick="tab='setup';render()">⚙ Setup</button>
+  </div>
+  ${tab!=="setup"?`<div class="bn"><h3>🟢 BUY ZONE — ${buy.length} stocks ≥60/100</h3><div class="ch">${chips}</div></div>`:""}
+  <div class="mn">
+    ${tab==="setup"?`<div class="f">
+      <div class="pc">
+        <h3>🤖 Telegram Bot Setup (60 seconds)</h3>
+        <div class="sub">One-time setup for automatic daily alerts</div>
+        <div class="st">
+          <b>Step 1:</b> Open Telegram → search <code>@BotFather</code> → send <code>/newbot</code><br>
+          <b>Step 2:</b> Name it anything (e.g., "BuyZone Bot")<br>
+          <b>Step 3:</b> Copy the <b>Bot Token</b> it gives you → paste below<br>
+          <b>Step 4:</b> Open your new bot in Telegram → send it any message (like "hi")<br>
+          <b>Step 5:</b> Visit: <code>https://api.telegram.org/bot&lt;TOKEN&gt;/getUpdates</code><br>
+          Find <code>"chat":{"id":XXXXXXXX</code> → that's your <b>Chat ID</b> → paste below<br><br>
+          <b style="color:var(--g)">After this:</b> Set these as env vars on Vercel:<br>
+          <code>TELEGRAM_BOT_TOKEN</code> and <code>TELEGRAM_CHAT_ID</code><br>
+          The cron job runs at 3:45 PM IST Mon–Fri automatically.
+        </div>
+      </div>
+      <div class="pc">
+        <h3>📱 Install as Phone App</h3>
+        <div style="font-size:12px;color:var(--d);line-height:1.8">
+          <b style="color:var(--w)">Android:</b> Chrome → ⋮ → "Add to Home Screen"<br>
+          <b style="color:var(--w)">iPhone:</b> Safari → Share → "Add to Home Screen"
+        </div>
+      </div>
+      <div class="pc">
+        <h3>⏰ Vercel Cron Schedule</h3>
+        <div style="font-size:12px;color:var(--d);line-height:1.8">
+          Currently set to <code>15 10 * * 1-5</code> (3:45 PM IST = 10:15 UTC)<br>
+          Vercel Pro ($20/mo) is needed for cron jobs.<br>
+          <b style="color:var(--am)">Free alternative:</b> Use <code>cron-job.org</code> (free) to hit<br>
+          <code>your-site.vercel.app/api/cron</code> at your preferred schedule.
+        </div>
+      </div>
+    </div>`:`<div class="cd f" style="overflow:auto;max-height:65vh">
+      <table><thead><tr><th>Stock</th><th>LTP</th><th>DCF</th><th>Upside</th><th>Score</th><th>Zone</th></tr></thead>
+      <tbody>${rows}</tbody></table>
+    </div>`}
+    <div>
+      <div class="pc f">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span style="font-size:20px">🤖</span>
+          <div><h3>Telegram Alerts</h3><div class="sub">Send buy-zone alert to your Telegram</div></div>
+        </div>
+        <input class="inp" placeholder="Bot Token (from @BotFather)" value="${esc(tgToken)}" oninput="tgToken=this.value">
+        <input class="inp" placeholder="Chat ID (from /getUpdates)" value="${esc(tgChat)}" oninput="tgChat=this.value">
+        <button class="bt ${canSend?"bt-go":"bt-off"}" ${canSend?"":"disabled"} onclick="sendAlert()">
+          ${sending?"⏳ Sending...":"📩 Send Alert to Telegram"}
+        </button>
+        ${logH?`<div class="lg">${logH}</div>`:""}
+      </div>
+    </div>
+  </div>
+  <div class="bar">
+    <button class="r" id="rb" onclick="refresh()">🔄 Refresh</button>
+    <button class="t" onclick="sendAlert()">📩 Send Telegram Alert</button>
+  </div>
+  <div style="padding:16px 14px 80px;font-size:8px;color:var(--m)">Not financial advice. Consult SEBI-registered advisor.</div>`;
+}
+load();setInterval(load,300000);
+</script>
+</body>
+</html>
