@@ -1,11 +1,47 @@
-{
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/$1" }
-  ],
-  "crons": [
-    {
-      "path": "/api/cron",
-      "schedule": "15 10 * * 1-5"
-    }
-  ]
-}
+{"buildCommand":"","outputDirectory":"public","framework":null,"installCommand":"npm install"}
+```
+4. Scroll down → click green **"Commit changes"**
+
+**File 2: `package.json`**
+1. Click **"Add file"** → **"Create new file"**
+2. Name: `package.json`
+3. Paste: `{"private":true,"dependencies":{"node-fetch":"^2.7.0"}}`
+4. Commit
+
+**File 3: `public/index.html`**
+1. Click **"Add file"** → **"Create new file"**
+2. In the name box type: `public/index.html` — **the `/` creates the folder automatically!**
+3. Open the `FILE3-public-index.html` from my earlier downloads, copy ALL the text
+4. Paste it in the editor box
+5. Commit
+
+**File 4: `api/_shared.js`**
+1. Click **"Add file"** → **"Create new file"**
+2. Name: `api/_shared.js` (the `/` creates the api folder)
+3. Open the zip → find `final-vercel/api/_shared.js` → copy ALL content → paste
+4. Commit
+
+**File 5: `api/scores.js`**
+1. Same: "Add file" → "Create new file"
+2. Name: `api/scores.js`
+3. Copy content from zip `final-vercel/api/scores.js` → paste
+4. Commit
+
+**File 6: `api/cron.js`**
+1. Name: `api/cron.js`
+2. Copy from zip → paste → Commit
+
+**File 7: `api/send-alert.js`**
+1. Name: `api/send-alert.js`
+2. Copy from zip → paste → Commit
+
+---
+
+**PART 3: CHECK YOUR REPO LOOKS LIKE THIS**
+
+On your GitHub repo page you should see:
+```
+📁 api/
+📁 public/
+📄 package.json
+📄 vercel.json
